@@ -1,8 +1,0 @@
-E:\pnunit-dev\codice.test\bin\Debug\codice.test.dll
-E:\pnunit-dev\codice.test\bin\Debug\codice.test.pdb
-E:\pnunit-dev\codice.test\bin\Debug\nunit.framework.dll
-E:\pnunit-dev\codice.test\bin\Debug\pnunit.framework.dll
-E:\pnunit-dev\codice.test\bin\Debug\nunit.core.dll
-E:\pnunit-dev\codice.test\obj\Debug\ResolveAssemblyReference.cache
-E:\pnunit-dev\codice.test\obj\Debug\codice.test.dll
-E:\pnunit-dev\codice.test\obj\Debug\codice.test.pdb

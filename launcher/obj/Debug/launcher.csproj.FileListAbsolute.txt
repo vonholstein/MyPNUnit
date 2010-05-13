@@ -1,0 +1,10 @@
+E:\pnunit-dev\launcher\bin\Debug\launcher.exe
+E:\pnunit-dev\launcher\bin\Debug\launcher.pdb
+E:\pnunit-dev\launcher\bin\Debug\log4net.dll
+E:\pnunit-dev\launcher\bin\Debug\nunit.core.dll
+E:\pnunit-dev\launcher\bin\Debug\nunit.util.dll
+E:\pnunit-dev\launcher\bin\Debug\pnunit.framework.dll
+E:\pnunit-dev\launcher\bin\Debug\pnunit.framework.pdb
+E:\pnunit-dev\launcher\obj\Debug\ResolveAssemblyReference.cache
+E:\pnunit-dev\launcher\obj\Debug\launcher.exe
+E:\pnunit-dev\launcher\obj\Debug\launcher.pdb

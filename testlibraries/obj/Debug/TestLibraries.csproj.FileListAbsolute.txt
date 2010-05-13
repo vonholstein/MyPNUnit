@@ -1,0 +1,9 @@
+E:\pnunit-dev\testlibraries\bin\Debug\TestLibraries.dll
+E:\pnunit-dev\testlibraries\bin\Debug\TestLibraries.pdb
+E:\pnunit-dev\testlibraries\bin\Debug\nunit.core.dll
+E:\pnunit-dev\testlibraries\bin\Debug\nunit.framework.dll
+E:\pnunit-dev\testlibraries\bin\Debug\pnunit.framework.dll
+E:\pnunit-dev\testlibraries\bin\Debug\pnunit.framework.pdb
+E:\pnunit-dev\testlibraries\obj\Debug\ResolveAssemblyReference.cache
+E:\pnunit-dev\testlibraries\obj\Debug\TestLibraries.dll
+E:\pnunit-dev\testlibraries\obj\Debug\TestLibraries.pdb

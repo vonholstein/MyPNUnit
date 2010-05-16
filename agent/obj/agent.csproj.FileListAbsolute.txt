@@ -1,0 +1,10 @@
+F:\AutoInstallProject\pnunit-dev\agent\bin\Debug\agent.exe
+F:\AutoInstallProject\pnunit-dev\agent\bin\Debug\agent.pdb
+F:\AutoInstallProject\pnunit-dev\agent\bin\Debug\log4net.dll
+F:\AutoInstallProject\pnunit-dev\agent\bin\Debug\nunit.core.dll
+F:\AutoInstallProject\pnunit-dev\agent\bin\Debug\nunit.framework.dll
+F:\AutoInstallProject\pnunit-dev\agent\bin\Debug\nunit.util.dll
+F:\AutoInstallProject\pnunit-dev\agent\bin\Debug\pnunit.framework.dll
+F:\AutoInstallProject\pnunit-dev\agent\obj\Debug\ResolveAssemblyReference.cache
+F:\AutoInstallProject\pnunit-dev\agent\obj\Debug\agent.exe
+F:\AutoInstallProject\pnunit-dev\agent\obj\Debug\agent.pdb

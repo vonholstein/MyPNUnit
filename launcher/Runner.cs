@@ -71,6 +71,9 @@ namespace PNUnit.Launcher
 				if (test.Machine.StartsWith(agentkey))
 					test.Machine = mTestGroup.Agents[int.Parse(test.Machine.Substring(agentkey.Length))-1];
 
+                //location to configure machine and bring up agent
+
+
 				log.InfoFormat("Starting {0} test {1} on {2}", mTestGroup.Name, test.Name, test.Machine);
 				// contact the machine
 				try

@@ -1,0 +1,9 @@
+F:\AutoInstallProject\pnunit-dev\testlibraries\bin\Debug\TestLibraries.dll
+F:\AutoInstallProject\pnunit-dev\testlibraries\bin\Debug\TestLibraries.pdb
+F:\AutoInstallProject\pnunit-dev\testlibraries\bin\Debug\nunit.core.dll
+F:\AutoInstallProject\pnunit-dev\testlibraries\bin\Debug\nunit.framework.dll
+F:\AutoInstallProject\pnunit-dev\testlibraries\bin\Debug\pnunit.framework.dll
+F:\AutoInstallProject\pnunit-dev\testlibraries\bin\Debug\pnunit.framework.pdb
+F:\AutoInstallProject\pnunit-dev\testlibraries\obj\Debug\ResolveAssemblyReference.cache
+F:\AutoInstallProject\pnunit-dev\testlibraries\obj\Debug\TestLibraries.dll
+F:\AutoInstallProject\pnunit-dev\testlibraries\obj\Debug\TestLibraries.pdb

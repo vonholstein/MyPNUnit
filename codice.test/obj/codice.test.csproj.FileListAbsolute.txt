@@ -1,0 +1,8 @@
+F:\AutoInstallProject\pnunit-dev\codice.test\bin\Debug\codice.test.dll
+F:\AutoInstallProject\pnunit-dev\codice.test\bin\Debug\codice.test.pdb
+F:\AutoInstallProject\pnunit-dev\codice.test\bin\Debug\nunit.framework.dll
+F:\AutoInstallProject\pnunit-dev\codice.test\bin\Debug\pnunit.framework.dll
+F:\AutoInstallProject\pnunit-dev\codice.test\bin\Debug\nunit.core.dll
+F:\AutoInstallProject\pnunit-dev\codice.test\obj\Debug\ResolveAssemblyReference.cache
+F:\AutoInstallProject\pnunit-dev\codice.test\obj\Debug\codice.test.dll
+F:\AutoInstallProject\pnunit-dev\codice.test\obj\Debug\codice.test.pdb

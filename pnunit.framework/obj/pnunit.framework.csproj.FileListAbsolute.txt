@@ -1,0 +1,6 @@
+F:\AutoInstallProject\pnunit-dev\pnunit.framework\bin\Debug\pnunit.framework.dll
+F:\AutoInstallProject\pnunit-dev\pnunit.framework\bin\Debug\pnunit.framework.pdb
+F:\AutoInstallProject\pnunit-dev\pnunit.framework\bin\Debug\nunit.core.dll
+F:\AutoInstallProject\pnunit-dev\pnunit.framework\obj\Debug\ResolveAssemblyReference.cache
+F:\AutoInstallProject\pnunit-dev\pnunit.framework\obj\Debug\pnunit.framework.dll
+F:\AutoInstallProject\pnunit-dev\pnunit.framework\obj\Debug\pnunit.framework.pdb

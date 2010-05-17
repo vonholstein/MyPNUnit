@@ -5,6 +5,8 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Serialization.Formatters;
+using Utilities;
+using VirtualLib;
 
 using NUnit.Core;
 
@@ -18,7 +20,10 @@ namespace PNUnit.Launcher
 {
 	class Launcher
 	{
-		[STAThread]
+        public static IniFile environment = new IniFile(@"F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\environment.ini");
+        public static VMHost automationHost;
+
+        [MTAThread]
 		static void Main(string[] args)
 		{   
 			// Load the test configuration file
@@ -41,6 +46,8 @@ namespace PNUnit.Launcher
 			ConfigureLogging();
             
 			ConfigureRemoting();
+
+            ConfigureVMHost();
 
 			// Each parallel test is launched sequencially...
 			Runner[] runners = new Runner[group.ParallelTests.Length];
@@ -147,6 +154,55 @@ namespace PNUnit.Launcher
 					res.Message, res.StackTrace);
 
 		}
+
+        private static void ConfigureVMHost()
+        {
+            string hostUrl = environment.IniReadValue("VCENTER","URL");
+            string vCenterServer = environment.IniReadValue("VCENTER","SERVER");
+            string vCenterPort = environment.IniReadValue("VCENTER","PORT");
+            string vCenterUser = environment.IniReadValue("VCENTER", "USERNAME");
+            string vCenterPassword = environment.IniReadValue("VCENTER", "PASSWORD");
+            string esxHost = environment.IniReadValue("VCENTER", "ESXHOST");
+            string dataCenter = environment.IniReadValue("VCENTER", "DATACENTER");
+
+            if(hostUrl == null)
+            {
+                Console.WriteLine("No url specified in ini file, exiting");
+                Environment.Exit(0); 
+            }
+            else if (vCenterServer == null)
+            {
+                Console.WriteLine("VCenter server not specified in ini file, exiting");
+            }
+            else if (vCenterPort == null)
+            {
+                Console.WriteLine("VCenter port not specified in ini file, exiting");
+            }
+            else if (vCenterUser == null)
+            {
+                Console.WriteLine("VCenter username not specified in ini file, exiting");
+            }
+            else if (vCenterPassword == null)
+            {
+                Console.WriteLine("VCenter password not specified in ini file, exiting");
+            }
+            else if (esxHost == null)
+            {
+                Console.WriteLine("ESX Host not specified in ini file, exiting");
+            }
+            else if (dataCenter == null)
+            {
+                Console.WriteLine("Datacenter name not specified in ini file, exiting");
+            }
+            else
+            {
+                Console.WriteLine("All host parameters specified, proceeding to connect to host");
+            } 
+
+            //automationHost = new VMHost("https://localhost:4443/sdk/vimservice", "localhost", "4443", "administrator", "Yv74aL5j", "Automation", "172.16.196.23");
+            automationHost = new VMHost(hostUrl, vCenterServer, vCenterPort, vCenterUser, vCenterPassword, dataCenter, esxHost);
+            
+        }
 
 		private static void ConfigureLogging()
 		{

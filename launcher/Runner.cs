@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
+using VirtualLib;
+using PNUnit.Launcher;
 
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Lifetime;
@@ -17,7 +20,9 @@ namespace PNUnit.Launcher
 	{
 
 		private static readonly ILog log = LogManager.GetLogger(typeof(Runner));
-		private const string agentkey = "_AGENT";
+        private static int paramCount = 7;
+
+		private const string agentkey = "_AGENT";        
 
 		private ParallelTest mTestGroup;
 		private Thread mThread = null;
@@ -27,6 +32,9 @@ namespace PNUnit.Launcher
 		private Hashtable mBarriers;
 		private int mLaunchedTests;
 		private Hashtable mBarriersOfTests;
+
+//        private string[] acceptedParams = new string[] { "OS", "DB", "DBLOC", "AUTH", "BITNESS" };
+        private string[] acceptedParams = new string[] { "OS", "DB", "DBLOC", "AUTH", "BITNESS", "EPOADMIN","EPOPASSWORD" };
 
 		public Runner(ParallelTest test)
 		{
@@ -68,11 +76,183 @@ namespace PNUnit.Launcher
 			mLaunchedTests = 0;
 			foreach( TestConf test in mTestGroup.Tests )
 			{
+                bool parseStatus = true;
+                int count = 0;
+                VM testVM = null;
+                string templateName;
+                string systemName;
+                string[] dnsList;
+                string workGroupPassword;
+                string domainAdmin;
+                string domainPassword;
+                string joinDomain;
+                string productId;
+                bool deployStatus;
+
 				if (test.Machine.StartsWith(agentkey))
-					test.Machine = mTestGroup.Agents[int.Parse(test.Machine.Substring(agentkey.Length))-1];
+					test.Machine = mTestGroup.Agents[int.Parse(test.Machine.Substring(agentkey.Length))-1];               
+                
+                //Get Parameters for creating VM                
+                IDictionary<string, string> vmParams = new Dictionary<string, string>();
+                
+                //parse parameters and check if they are the correct parameters
+                foreach (string s in test.TestParams)
+                {                    
+                    string[] keyValue = s.Split(new Char[] { '=' });
+                    if (keyValue.Length != 2 || !(((IList)acceptedParams).Contains(keyValue[0]))) //if not key=value format or key is not in approved list
+                    {
+                        Console.WriteLine("Incorrect parameter in Group {0} Test {1} Count {2}", mTestGroup.Name, test.Name,count + 1);
+                        parseStatus = false;
+                        break;
+                    }
+                    else
+                    {
+                        vmParams.Add(keyValue[0], keyValue[1]);
+                    }                    
+                    count = count + 1;
+                }
 
-                //location to configure machine and bring up agent
+                if (parseStatus == false)
+                {
+                    Console.WriteLine("Error in parsing test parameters, skipping test");
+                    continue;
+                }
+                if (count != paramCount)
+                {
+                    Console.WriteLine("Group {0} Test {1} Not all parameters required for deploying VM specified, skipping test", mTestGroup.Name, test.Name);
+                    continue;
+                }
 
+                if (vmParams["OS"].StartsWith("WIN2003"))
+                {
+                    testVM = new Win2003VM(Launcher.automationHost);
+                }
+                else if (vmParams["OS"].StartsWith("WIN2008"))
+                {
+                    testVM = new Win2008VM(Launcher.automationHost);
+                }
+                else
+                {
+                    Console.WriteLine("Invalid OS type specified, exiting");
+                    Environment.Exit(1);
+                }
+
+                //log.InfoFormat("Creating VM for test {0}" + test.Name);
+
+                templateName = "TM_" + vmParams["OS"] + vmParams["BITNESS"];
+                systemName = "W" + vmParams["OS"].Substring(3, 6) + vmParams["BITNESS"] + new Random().Next(10000, 99999).ToString();
+                //systemName = new Random().Next(1000000, 9999999).ToString();
+                dnsList = new string[] { Launcher.environment.IniReadValue("ENVIRONMENTINFO","DNS" + vmParams["AUTH"]) };
+                workGroupPassword = Launcher.environment.IniReadValue("ENVIRONMENTINFO","WORKGROUPPASSWORD");
+                domainAdmin = Launcher.environment.IniReadValue("ENVIRONMENTINFO","ADMIN" + vmParams["AUTH"]);
+                domainPassword = Launcher.environment.IniReadValue("ENVIRONMENTINFO","PASSWORD" + vmParams["AUTH"]);
+                joinDomain = Launcher.environment.IniReadValue("ENVIRONMENTINFO","DOMAIN" + vmParams["AUTH"]);
+                productId = Launcher.environment.IniReadValue("PRODUCTID", vmParams["OS"] + vmParams["BITNESS"]);
+
+                testVM.defineSysprepParameters(templateName, systemName, dnsList, workGroupPassword, domainAdmin, domainPassword, joinDomain, productId);
+
+                //Parameters set, deploy VM
+                //deployStatus = testVM.deploy();
+                deployStatus = true;
+                testVM.setName("W2003R2X6467479");
+                string ePOBuildPath = Launcher.environment.IniReadValue("BUILD","PATH");
+                
+                if(deployStatus == true)
+                {
+                    bool copyStatus;
+
+                    copyStatus = true;
+                    //testVM.waitForLogon(300);
+                    //testVM.setAutoLoginToDomainAndRestart();
+                    //copyStatus = testVM.copyRequiredFilesToVM(@"f:\autoinstallproject\epo.zip",@"f:\autoinstallproject\agent.zip",@"f:\autoinstallproject\uzext.exe");
+                    //copyStatus = testVM.copyRequiredFilesToVM(Launcher.environment.IniReadValue("BUILD", "EPOPATH"), Launcher.environment.IniReadValue("AGENT", "ZIP"), @"f:\autoinstallproject\uzext.exe");
+
+                    if (copyStatus)
+                    {
+                        testVM.startAgent();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Copy failed, skipping test");
+                        continue;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Deploy failed for vm name {0} " + testVM.getName());
+                    continue;
+                }
+                /*
+                adminUserName – EPOADMIN
+                adminPassword – EPOPASSWORD
+                databaseServername – DBSERVER
+                databseUserName – DBUSERNAME
+                databaseDomain – DBDOMAIN
+                databasePassword – DBPASSWORD
+                databaseAuth – DBAUTH
+                */
+                test.Machine = testVM.getName() +":" + Launcher.environment.IniReadValue("AGENT", "PORT"); ;
+
+                //Build epo parameters
+                // Fill in SQL Server name, instance name, db username, db password, db domain, db auth
+
+                /*SQL Server name - DBSERVER
+                 *  If SQL is remote then use ntlmvalue
+                */
+
+                if (vmParams["DBLOC"].Equals("REMOTE"))
+                {
+                    vmParams.Add("DBSERVER", Launcher.environment.IniReadValue("ENVIRONMENTINFO", "REMOTE" + vmParams["DB"] + vmParams["AUTH"]));
+
+                }
+                else
+                {
+                    vmParams.Add("DBSERVER", "LOCALHOST");
+                }
+
+                /*Instance name*/
+                vmParams.Add("DBINSTANCE", Launcher.environment.IniReadValue("ENVIRONMENTINFO", vmParams["DBLOC"] + vmParams["DB"] + vmParams["AUTH"] + "INSTANCE"));
+                
+                /*Database user name - DBUSERNAME
+                 * If AUTH is NTLM use NT else use sa
+                */
+                if (vmParams["AUTH"].StartsWith("NT"))
+                {
+                    vmParams.Add("DBUSERNAME", Launcher.environment.IniReadValue("ENVIRONMENTINFO", "ADMIN" + vmParams["AUTH"]));
+                }
+                else
+                {
+                    vmParams.Add("DBUSERNAME", "sa");
+                }
+
+                /*Database password */
+                vmParams.Add("DBPASSWORD", Launcher.environment.IniReadValue("ENVIRONMENTINFO", "PASSWORD" + vmParams["AUTH"]));
+
+                /*Database Domain*/
+                if(vmParams["AUTH"].StartsWith("NT"))
+                {
+                    vmParams.Add("DBDOMAIN", Launcher.environment.IniReadValue("ENVIRONMENTINFO", "DOMAIN" + vmParams["AUTH"]));
+                    vmParams.Add("DBAUTH", "1");
+                }
+                else
+                {
+                    vmParams.Add("DBDOMAIN", "");
+                    vmParams.Add("DBAUTH", "2");
+                }
+
+                //Add epo Path
+                vmParams.Add("EPOPATH",Launcher.environment.IniReadValue("BUILD","AGENTPATH"));
+
+                string[] newTestParams = new string[14];
+                
+                int i = 0;
+                foreach(string s in vmParams.Keys)
+                {
+                    newTestParams[i] = s + "=" + vmParams[s];
+                    ++i;
+                }                              
+
+                test.TestParams = newTestParams;
 
 				log.InfoFormat("Starting {0} test {1} on {2}", mTestGroup.Name, test.Name, test.Machine);
 				// contact the machine

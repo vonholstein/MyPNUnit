@@ -1,6 +1,6 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
-
+using System.Runtime.InteropServices;
 //
 // La información general de un ensamblado se controla mediante el siguiente 
 // conjunto de atributos. Cambie estos atributos para modificar la información
@@ -53,6 +53,10 @@ using System.Runtime.CompilerServices;
 //   (*) Firma retardada es una opción avanzada; consulte la documentación de
 //       Microsoft .NET Framework para obtener más información.
 //
+
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("77a08dd0-4464-4749-981a-47e31afc68d3")]
+
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]

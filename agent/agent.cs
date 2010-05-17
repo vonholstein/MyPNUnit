@@ -72,6 +72,8 @@ namespace PNUnit.Agent
 		{
 			log.InfoFormat("RunTest called for Test {0}, AssemblyName {1}, TestToRun {2}",
 				info.TestName, info.AssemblyName, info.TestToRun);
+            Console.WriteLine("RunTest called for Test {0}, AssemblyName {1}, TestToRun {2}",
+                info.TestName, info.AssemblyName, info.TestToRun);
 
 			new PNUnitTestRunner(info, mConfig).Run();
 		}

@@ -8,3 +8,16 @@ F:\AutoInstallProject\pnunit-dev\launcher\obj\Debug\ResolveAssemblyReference.cac
 F:\AutoInstallProject\pnunit-dev\launcher\obj\Debug\launcher.exe
 F:\AutoInstallProject\pnunit-dev\launcher\obj\Debug\launcher.pdb
 F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\pnunit.framework.pdb
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\Utilities.dll
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\VirtualLib.dll
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\Interop.VixCOM.dll
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\Vim25Service2005.dll
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\AppUtil.dll
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\Vestris.VMWareLib.dll
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\VMware.Security.CredentialStore.dll
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\VimService2005.dll
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\Utilities.pdb
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\AppUtil.pdb
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\VirtualLib.pdb
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\Vim25Service2005.XmlSerializers.dll
+F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\VimService2005.XmlSerializers.dll

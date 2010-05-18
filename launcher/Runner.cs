@@ -152,20 +152,18 @@ namespace PNUnit.Launcher
                 testVM.defineSysprepParameters(templateName, systemName, dnsList, workGroupPassword, domainAdmin, domainPassword, joinDomain, productId);
 
                 //Parameters set, deploy VM
-                //deployStatus = testVM.deploy();
-                deployStatus = true;
-                testVM.setName("W2003R2X6467479");
+                deployStatus = testVM.deploy();               
+                
                 string ePOBuildPath = Launcher.environment.IniReadValue("BUILD","PATH");
                 
                 if(deployStatus == true)
                 {
                     bool copyStatus;
-
-                    copyStatus = true;
-                    //testVM.waitForLogon(300);
-                    //testVM.setAutoLoginToDomainAndRestart();
+                    
+                    testVM.waitForLogon(300);
+                    testVM.setAutoLoginToDomainAndRestart();
                     //copyStatus = testVM.copyRequiredFilesToVM(@"f:\autoinstallproject\epo.zip",@"f:\autoinstallproject\agent.zip",@"f:\autoinstallproject\uzext.exe");
-                    //copyStatus = testVM.copyRequiredFilesToVM(Launcher.environment.IniReadValue("BUILD", "EPOPATH"), Launcher.environment.IniReadValue("AGENT", "ZIP"), @"f:\autoinstallproject\uzext.exe");
+                    copyStatus = testVM.copyRequiredFilesToVM(Launcher.environment.IniReadValue("BUILD", "EPOPATH"), Launcher.environment.IniReadValue("AGENT", "ZIP"), Launcher.environment.IniReadValue("AGENT","TESTS"), @"f:\autoinstallproject\uzext.exe");
 
                     if (copyStatus)
                     {

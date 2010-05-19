@@ -70,6 +70,7 @@ namespace PNUnit.Launcher
 			mFinish = new ManualResetEvent(false);
 			mBarriers = new Hashtable();
 			mBarriersOfTests = new Hashtable();
+            List<VM> vmList = new List<VM>();            
 
 			RemotingServices.Marshal(this, mTestGroup.Name);
 
@@ -127,6 +128,10 @@ namespace PNUnit.Launcher
                 {
                     testVM = new Win2003VM(Launcher.automationHost);
                 }
+                else if (vmParams["OS"].StartsWith("WIN2008R2"))
+                {
+                    testVM = new Win2008R2VM(Launcher.automationHost);
+                }
                 else if (vmParams["OS"].StartsWith("WIN2008"))
                 {
                     testVM = new Win2008VM(Launcher.automationHost);
@@ -153,21 +158,31 @@ namespace PNUnit.Launcher
 
                 //Parameters set, deploy VM
                 deployStatus = testVM.deploy();               
-                
+                //debug line
+                //testVM.setName("W2008DCX8681449");
+                //deployStatus = true;
                 string ePOBuildPath = Launcher.environment.IniReadValue("BUILD","PATH");
                 
                 if(deployStatus == true)
                 {
                     bool copyStatus;
-                    
-                    testVM.waitForLogon(300);
-                    testVM.setAutoLoginToDomainAndRestart();
+                    //copyStatus = true;
+                    vmList.Add(testVM);
+                    /* Wait 120 seconds for the deployment process to complete
+                     * During this time the system restarts 2 times,
+                     * since the system is being configured during this time waitForLogon() will be inconsistent
+                     */
+                    //System.Threading.Thread.Sleep(120000);
+                    testVM.waitForLogon(100);
+                    copyStatus = testVM.copyRequiredFilesToVM(Launcher.environment.IniReadValue("BUILD", "EPOPATH"), Launcher.environment.IniReadValue("AGENT", "ZIP"), Launcher.environment.IniReadValue("AGENT", "TESTS"), @"f:\autoinstallproject\uzext.exe");                    
+                    //testVM.setAutoLoginToDomainAndRestart();
                     //copyStatus = testVM.copyRequiredFilesToVM(@"f:\autoinstallproject\epo.zip",@"f:\autoinstallproject\agent.zip",@"f:\autoinstallproject\uzext.exe");
-                    copyStatus = testVM.copyRequiredFilesToVM(Launcher.environment.IniReadValue("BUILD", "EPOPATH"), Launcher.environment.IniReadValue("AGENT", "ZIP"), Launcher.environment.IniReadValue("AGENT","TESTS"), @"f:\autoinstallproject\uzext.exe");
-
+                    
                     if (copyStatus)
                     {
-                        testVM.startAgent();
+                        testVM.stage();
+                        testVM.waitForLogon(20);
+                        //testVM.startAgent();
                     }
                     else
                     {
@@ -208,8 +223,14 @@ namespace PNUnit.Launcher
                     vmParams.Add("DBSERVER", "LOCALHOST");
                 }
 
-                /*Instance name*/
-                vmParams.Add("DBINSTANCE", Launcher.environment.IniReadValue("ENVIRONMENTINFO", vmParams["DBLOC"] + vmParams["DB"] + vmParams["AUTH"] + "INSTANCE"));
+                if (vmParams["DBLOC"].Equals("REMOTE"))
+                {
+                    vmParams.Add("DBINSTANCE", Launcher.environment.IniReadValue("ENVIRONMENTINFO", vmParams["DBLOC"] + vmParams["DB"] + vmParams["AUTH"] + "INSTANCE"));
+                }
+                else
+                {
+                    vmParams.Add("DBINSTANCE", Launcher.environment.IniReadValue("ENVIRONMENTINFO", vmParams["DBLOC"] + vmParams["DB"] + "INSTANCE"));
+                }
                 
                 /*Database user name - DBUSERNAME
                  * If AUTH is NTLM use NT else use sa
@@ -223,19 +244,23 @@ namespace PNUnit.Launcher
                     vmParams.Add("DBUSERNAME", "sa");
                 }
 
-                /*Database password */
-                vmParams.Add("DBPASSWORD", Launcher.environment.IniReadValue("ENVIRONMENTINFO", "PASSWORD" + vmParams["AUTH"]));
+                /*Database password
+                 * If auth is NTLM, use domain password
+                 * else find sa password for domain
+                
 
                 /*Database Domain*/
                 if(vmParams["AUTH"].StartsWith("NT"))
                 {
                     vmParams.Add("DBDOMAIN", Launcher.environment.IniReadValue("ENVIRONMENTINFO", "DOMAIN" + vmParams["AUTH"]));
+                    vmParams.Add("DBPASSWORD", Launcher.environment.IniReadValue("ENVIRONMENTINFO", "PASSWORD" + vmParams["AUTH"]));
                     vmParams.Add("DBAUTH", "1");
                 }
                 else
                 {
                     vmParams.Add("DBDOMAIN", "");
                     vmParams.Add("DBAUTH", "2");
+                    vmParams.Add("DBPASSWORD", Launcher.environment.IniReadValue("ENVIRONMENTINFO", vmParams["DBLOC"] + vmParams["DB"] + vmParams["AUTH"] + "PASS"));
                 }
 
                 //Add epo Path
@@ -293,6 +318,11 @@ namespace PNUnit.Launcher
 			Thread.Sleep(500); // wait for the NotifyResult call to finish
 			RemotingServices.Disconnect(this);
 			log.DebugFormat("Thread going to finish for TestGroup {0}", mTestGroup.Name);
+            //Delete VM's
+            foreach (VM vm in vmList)
+            {
+                vm.delete();
+            }
 		}
         
 		private bool HasToWait()

@@ -34,7 +34,7 @@
     <RemoteDebugMachine>
     </RemoteDebugMachine>
     <StartAction>Project</StartAction>
-    <StartArguments>SingleTest.conf</StartArguments>
+    <StartArguments>TrialRun.conf</StartArguments>
     <StartPage>
     </StartPage>
     <StartProgram>

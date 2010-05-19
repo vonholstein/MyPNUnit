@@ -55,7 +55,9 @@ namespace PNUnit.Agent
 		{
 			string log4netpath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "agent.log.conf");
 			Console.WriteLine(log4netpath);
-			XmlConfigurator.Configure(new FileInfo(log4netpath));
+            FileInfo fi = new FileInfo(log4netpath);
+			XmlConfigurator.Configure(fi);
+            //XmlConfigurator.Configure();
 		}
 	}
 
@@ -69,7 +71,7 @@ namespace PNUnit.Agent
 		#region IPNUnitAgent
 
 		public void RunTest(TestInfo info)
-		{
+		{            
 			log.InfoFormat("RunTest called for Test {0}, AssemblyName {1}, TestToRun {2}",
 				info.TestName, info.AssemblyName, info.TestToRun);
             Console.WriteLine("RunTest called for Test {0}, AssemblyName {1}, TestToRun {2}",

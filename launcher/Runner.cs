@@ -157,32 +157,32 @@ namespace PNUnit.Launcher
                 testVM.defineSysprepParameters(templateName, systemName, dnsList, workGroupPassword, domainAdmin, domainPassword, joinDomain, productId);
 
                 //Parameters set, deploy VM
-                deployStatus = testVM.deploy();               
+                //deployStatus = testVM.deploy();               
                 //debug line
-                //testVM.setName("W2008DCX8681449");
-                //deployStatus = true;
+                testVM.setName("W2003R2X8654922");
+                //testVM.setName("fuego");
+                //testVM.setName("W2008DCX8637933");
+
+                deployStatus = true;
                 string ePOBuildPath = Launcher.environment.IniReadValue("BUILD","PATH");
                 
                 if(deployStatus == true)
                 {
                     bool copyStatus;
-                    //copyStatus = true;
+                    copyStatus = true;
                     vmList.Add(testVM);
                     /* Wait 120 seconds for the deployment process to complete
                      * During this time the system restarts 2 times,
                      * since the system is being configured during this time waitForLogon() will be inconsistent
                      */
                     //System.Threading.Thread.Sleep(120000);
-                    testVM.waitForLogon(100);
-                    copyStatus = testVM.copyRequiredFilesToVM(Launcher.environment.IniReadValue("BUILD", "EPOPATH"), Launcher.environment.IniReadValue("AGENT", "ZIP"), Launcher.environment.IniReadValue("AGENT", "TESTS"), @"f:\autoinstallproject\uzext.exe");                    
-                    //testVM.setAutoLoginToDomainAndRestart();
-                    //copyStatus = testVM.copyRequiredFilesToVM(@"f:\autoinstallproject\epo.zip",@"f:\autoinstallproject\agent.zip",@"f:\autoinstallproject\uzext.exe");
+                    //testVM.waitForLogon(100);
+                    //copyStatus = testVM.copyRequiredFilesToVM(Launcher.environment.IniReadValue("BUILD", "EPOPATH"), Launcher.environment.IniReadValue("AGENT", "ZIP"), Launcher.environment.IniReadValue("AGENT", "TESTS"), @"f:\autoinstallproject\uzext.exe");                    
                     
                     if (copyStatus)
                     {
-                        testVM.stage();
-                        testVM.waitForLogon(20);
-                        //testVM.startAgent();
+                        //testVM.stage();
+                        //testVM.waitForLogon(20);                        
                     }
                     else
                     {

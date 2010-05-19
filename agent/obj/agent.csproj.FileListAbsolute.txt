@@ -8,3 +8,4 @@ F:\AutoInstallProject\pnunit-dev\agent\bin\Debug\pnunit.framework.dll
 F:\AutoInstallProject\pnunit-dev\agent\obj\Debug\ResolveAssemblyReference.cache
 F:\AutoInstallProject\pnunit-dev\agent\obj\Debug\agent.exe
 F:\AutoInstallProject\pnunit-dev\agent\obj\Debug\agent.pdb
+F:\AutoInstallProject\pnunit-dev\agent\bin\Debug\agent.exe.config

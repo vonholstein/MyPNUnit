@@ -21,8 +21,7 @@
     <RemoteDebugMachine>
     </RemoteDebugMachine>
     <StartAction>Project</StartAction>
-    <StartArguments>
-    </StartArguments>
+    <StartArguments>c:\agent\agent.conf</StartArguments>
     <StartPage>
     </StartPage>
     <StartProgram>

@@ -157,32 +157,33 @@ namespace PNUnit.Launcher
                 testVM.defineSysprepParameters(templateName, systemName, dnsList, workGroupPassword, domainAdmin, domainPassword, joinDomain, productId);
 
                 //Parameters set, deploy VM
-                //deployStatus = testVM.deploy();               
+                deployStatus = testVM.deploy();               
                 //debug line
-                testVM.setName("W2003R2X8654922");
+                //testVM.setName("W2003R2X8654922");
                 //testVM.setName("fuego");
                 //testVM.setName("W2008DCX8637933");
 
-                deployStatus = true;
+                
                 string ePOBuildPath = Launcher.environment.IniReadValue("BUILD","PATH");
                 
                 if(deployStatus == true)
                 {
                     bool copyStatus;
-                    copyStatus = true;
+                
                     vmList.Add(testVM);
                     /* Wait 120 seconds for the deployment process to complete
                      * During this time the system restarts 2 times,
                      * since the system is being configured during this time waitForLogon() will be inconsistent
                      */
-                    //System.Threading.Thread.Sleep(120000);
-                    //testVM.waitForLogon(100);
-                    //copyStatus = testVM.copyRequiredFilesToVM(Launcher.environment.IniReadValue("BUILD", "EPOPATH"), Launcher.environment.IniReadValue("AGENT", "ZIP"), Launcher.environment.IniReadValue("AGENT", "TESTS"), @"f:\autoinstallproject\uzext.exe");                    
+                    System.Threading.Thread.Sleep(120000);
+                    testVM.waitForLogon(100);
+                    System.Threading.Thread.Sleep(5000); //wait 5 seconds for stabilization
+                    copyStatus = testVM.copyRequiredFilesToVM(Launcher.environment.IniReadValue("BUILD", "EPOPATH"), Launcher.environment.IniReadValue("AGENT", "ZIP"), Launcher.environment.IniReadValue("AGENT", "TESTS"), @"f:\autoinstallproject\uzext.exe");                    
                     
                     if (copyStatus)
                     {
-                        //testVM.stage();
-                        //testVM.waitForLogon(20);                        
+                        testVM.stage();
+                        testVM.waitForLogon(20);                        
                     }
                     else
                     {
@@ -321,7 +322,7 @@ namespace PNUnit.Launcher
             //Delete VM's
             foreach (VM vm in vmList)
             {
-                vm.delete();
+                //vm.delete();
             }
 		}
         

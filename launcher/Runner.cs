@@ -101,26 +101,27 @@ namespace PNUnit.Launcher
                 {                    
                     string[] keyValue = s.Split(new Char[] { '=' });
                     if (keyValue.Length != 2 || !(((IList)acceptedParams).Contains(keyValue[0]))) //if not key=value format or key is not in approved list
-                    {
-                        Console.WriteLine("Incorrect parameter in Group {0} Test {1} Count {2}", mTestGroup.Name, test.Name,count + 1);
+                    {                                                
                         parseStatus = false;
                         break;
                     }
                     else
                     {
+                        log.DebugFormat("Parameter parse successful for test ", test.Name); 
                         vmParams.Add(keyValue[0], keyValue[1]);
                     }                    
                     count = count + 1;
                 }
 
                 if (parseStatus == false)
-                {
-                    Console.WriteLine("Error in parsing test parameters, skipping test");
+                {                    
+                    log.ErrorFormat("Incorrect parameter in Group {0} Test {1}, skipping test", mTestGroup.Name, test.Name, count + 1);
                     continue;
                 }
                 if (count != paramCount)
                 {
                     Console.WriteLine("Group {0} Test {1} Not all parameters required for deploying VM specified, skipping test", mTestGroup.Name, test.Name);
+                    log.ErrorFormat("Group {0} Test {1} Not all parameters required for deploying VM specified, skipping test", mTestGroup.Name, test.Name);
                     continue;
                 }
 
@@ -155,45 +156,62 @@ namespace PNUnit.Launcher
                 productId = Launcher.environment.IniReadValue("PRODUCTID", vmParams["OS"] + vmParams["BITNESS"]);
 
                 testVM.defineSysprepParameters(templateName, systemName, dnsList, workGroupPassword, domainAdmin, domainPassword, joinDomain, productId);
-
+                
                 //Parameters set, deploy VM
+                log.InfoFormat("Set to deploy VM from template {0}", templateName);
+                log.DebugFormat("Template parameters: systemName:{0} primaryDns:{1} workGroupPassword:{2} domainAdmin:{3} domainPassword:{4} domain:{5} productId:{6}", systemName, dnsList[0], workGroupPassword, domainAdmin, domainPassword, joinDomain, productId);
                 deployStatus = testVM.deploy();               
                 //debug line
-                //testVM.setName("W2003R2X8654922");
+                //testVM.setName("W2008DCX8655458");
+                //deployStatus = true;
                 //testVM.setName("fuego");
                 //testVM.setName("W2008DCX8637933");
 
+                //set test to vm
+                testVM.setTestName(test.Name);
                 
                 string ePOBuildPath = Launcher.environment.IniReadValue("BUILD","PATH");
-                
+                log.DebugFormat("ePO Build at {0}", ePOBuildPath);
+
                 if(deployStatus == true)
                 {
+                    log.InfoFormat("Deploy of template {0} to system {1} succeeded", templateName, systemName);
                     bool copyStatus;
+                    //debug line
+                    //copyStatus = true;
                 
                     vmList.Add(testVM);
                     /* Wait 120 seconds for the deployment process to complete
                      * During this time the system restarts 2 times,
                      * since the system is being configured during this time waitForLogon() will be inconsistent
                      */
+                    log.InfoFormat("Waiting atleast 2 minutes for VM customization to complete for {0}", systemName);
                     System.Threading.Thread.Sleep(120000);
+
                     testVM.waitForLogon(100);
+
                     System.Threading.Thread.Sleep(5000); //wait 5 seconds for stabilization
-                    copyStatus = testVM.copyRequiredFilesToVM(Launcher.environment.IniReadValue("BUILD", "EPOPATH"), Launcher.environment.IniReadValue("AGENT", "ZIP"), Launcher.environment.IniReadValue("AGENT", "TESTS"), @"f:\autoinstallproject\uzext.exe");                    
+                    log.InfoFormat("Copying build, agent and test files to VM {0}",systemName);
+                    copyStatus = testVM.copyRequiredFilesToVM(Launcher.environment.IniReadValue("BUILD", "EPOPATH"), Launcher.environment.IniReadValue("AGENT", "ZIP"), Launcher.environment.IniReadValue("AGENT", "TESTS"), @"f:\autoinstallproject\uzext.exe", @"f:\autoinstallproject\uzcomp.exe");                    
                     
                     if (copyStatus)
                     {
+                        log.InfoFormat("Copy successful to VM {0}",systemName);
+                        log.InfoFormat("Staging VM {0}", systemName);
                         testVM.stage();
-                        testVM.waitForLogon(20);                        
+                        log.InfoFormat("Waiting for user logon in VM {0}", systemName);
+                        testVM.waitForLogon(20);
+                        log.InfoFormat("User Logged on in VM {0}", systemName);
                     }
                     else
                     {
-                        Console.WriteLine("Copy failed, skipping test");
+                        log.ErrorFormat("File copy failed to VM {0}, skipping test", systemName);
                         continue;
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Deploy failed for vm name {0} " + testVM.getName());
+                    log.ErrorFormat("Deploy of template {0} to system {1} failed", templateName, systemName);
                     continue;
                 }
                 /*
@@ -217,11 +235,10 @@ namespace PNUnit.Launcher
                 if (vmParams["DBLOC"].Equals("REMOTE"))
                 {
                     vmParams.Add("DBSERVER", Launcher.environment.IniReadValue("ENVIRONMENTINFO", "REMOTE" + vmParams["DB"] + vmParams["AUTH"]));
-
                 }
                 else
                 {
-                    vmParams.Add("DBSERVER", "LOCALHOST");
+                    vmParams.Add("DBSERVER", testVM.getName());
                 }
 
                 if (vmParams["DBLOC"].Equals("REMOTE"))
@@ -267,18 +284,23 @@ namespace PNUnit.Launcher
                 //Add epo Path
                 vmParams.Add("EPOPATH",Launcher.environment.IniReadValue("BUILD","AGENTPATH"));
 
-                string[] newTestParams = new string[14];
+                string[] newTestParams = new string[14];                
                 
                 int i = 0;
                 foreach(string s in vmParams.Keys)
                 {
                     newTestParams[i] = s + "=" + vmParams[s];
                     ++i;
-                }                              
+                }
+
+                log.DebugFormat("Test Parameters for test {0} on {1} - {2}", test.Name, test.Machine, String.Join(",", newTestParams));
 
                 test.TestParams = newTestParams;
 
 				log.InfoFormat("Starting {0} test {1} on {2}", mTestGroup.Name, test.Name, test.Machine);
+
+
+
 				// contact the machine
 				try
 				{
@@ -311,7 +333,8 @@ namespace PNUnit.Launcher
 			}
             
 			log.DebugFormat("Thread going to wait for results for TestGroup {0}", mTestGroup.Name);
-			if( HasToWait() )
+            mFinish.Reset();
+			while( HasToWait() )
 				// wait for all tests to end
 				mFinish.WaitOne();
 
@@ -319,11 +342,14 @@ namespace PNUnit.Launcher
 			Thread.Sleep(500); // wait for the NotifyResult call to finish
 			RemotingServices.Disconnect(this);
 			log.DebugFormat("Thread going to finish for TestGroup {0}", mTestGroup.Name);
-            //Delete VM's
+            
+            // For each VM copy logs and delete            
             foreach (VM vm in vmList)
             {
+                vm.copyLogsToHost(@"c:\" + vm.getTestName() + ".zip", Launcher.runLogPath + "\\" + vm.getTestName() + ".zip");
                 //vm.delete();
             }
+            
 		}
         
 		private bool HasToWait()

@@ -21,6 +21,7 @@ namespace PNUnit.Launcher
 	class Launcher
 	{
         public static IniFile environment = new IniFile(@"F:\AutoInstallProject\pnunit-dev\launcher\bin\Debug\environment.ini");
+        public static string runLogPath;
         public static VMHost automationHost;
 
         [MTAThread]
@@ -48,6 +49,11 @@ namespace PNUnit.Launcher
 			ConfigureRemoting();
 
             ConfigureVMHost();
+
+            ConfigureRunLogging();
+
+            //Copy test playlist to logs folder
+            File.Copy(configfile, Path.Combine(runLogPath, "playlist.txt"));
 
 			// Each parallel test is launched sequencially...
 			Runner[] runners = new Runner[group.ParallelTests.Length];
@@ -210,6 +216,28 @@ namespace PNUnit.Launcher
 			XmlConfigurator.Configure(new FileInfo(log4netpath));
 		}
 
+        private static void ConfigureRunLogging()
+        {
+            //string root = Environment.GetEnvironmentVariable("EIAROOT");            
+            string root = @"f:\AutoInstallProject";
+            string rootLogPath = Path.Combine(root, "logs");
+            string currentRun = DateTime.Now.ToString().Replace('/', '-');
+            currentRun = currentRun.Replace(':', '.');
+            string runLogPath = Path.Combine(rootLogPath, currentRun);
 
+
+            if (!Directory.Exists(rootLogPath))
+            {
+                Directory.CreateDirectory(rootLogPath);
+            }
+
+            if (!Directory.Exists(runLogPath))
+            {
+                Directory.CreateDirectory(runLogPath);
+            }
+
+            Launcher.runLogPath = runLogPath;                                  
+
+        }
 	}
 }

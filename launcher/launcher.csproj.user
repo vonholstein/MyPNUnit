@@ -34,7 +34,7 @@
     <RemoteDebugMachine>
     </RemoteDebugMachine>
     <StartAction>Project</StartAction>
-    <StartArguments>TrialRun.conf</StartArguments>
+    <StartArguments>WhiteRun.conf</StartArguments>
     <StartPage>
     </StartPage>
     <StartProgram>

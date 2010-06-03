@@ -161,11 +161,11 @@ namespace PNUnit.Launcher
                 log.InfoFormat("Set to deploy VM from template {0}", templateName);
                 log.DebugFormat("Template parameters: systemName:{0} primaryDns:{1} workGroupPassword:{2} domainAdmin:{3} domainPassword:{4} domain:{5} productId:{6}", systemName, dnsList[0], workGroupPassword, domainAdmin, domainPassword, joinDomain, productId);
                 deployStatus = testVM.deploy();               
-                //debug line
-                //testVM.setName("W2008DCX8655458");
+                //debug line                
                 //deployStatus = true;
-                //testVM.setName("fuego");
+                //testVM.setName("W2003STX8688225");                
                 //testVM.setName("W2008DCX8637933");
+
 
                 //set test to vm
                 testVM.setTestName(test.Name);
@@ -186,7 +186,7 @@ namespace PNUnit.Launcher
                      * since the system is being configured during this time waitForLogon() will be inconsistent
                      */
                     log.InfoFormat("Waiting atleast 2 minutes for VM customization to complete for {0}", systemName);
-                    System.Threading.Thread.Sleep(120000);
+                    //System.Threading.Thread.Sleep(120000);
 
                     testVM.waitForLogon(100);
 
@@ -346,8 +346,8 @@ namespace PNUnit.Launcher
             // For each VM copy logs and delete            
             foreach (VM vm in vmList)
             {
-                vm.copyLogsToHost(@"c:\" + vm.getTestName() + ".zip", Launcher.runLogPath + "\\" + vm.getTestName() + ".zip");
-                //vm.delete();
+                vm.copyLogsToHost(@"c:\" + vm.getTestName(), Launcher.runLogPath);
+                vm.delete();
             }
             
 		}

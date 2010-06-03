@@ -4,12 +4,27 @@
             <Name>Run1</Name>
 	    <Tests>
                 <TestConf>
-                    <Name>WIN2003R2ENT_SQL2005_LOCAL_NTLMV1_X64</Name>
+                    <Name>20_WIN2003R2ENT_SQL2008_REMOTE_NTLMV2_X86</Name>
                     <Assembly>epo.dll</Assembly>
-                    <TestToRun>epo.Program.myAdditionTest</TestToRun>
+                    <TestToRun>epo.Install.silentInstall</TestToRun>
                     <Machine>Any</Machine>
                     <TestParams>
                         <string>OS=WIN2003R2ENT</string>
+			<string>DB=SQL2008</string>
+			<string>DBLOC=REMOTE</string>
+			<string>AUTH=NTLMV2</string>
+			<string>BITNESS=X86</string>
+			<string>EPOADMIN=admin</string>			
+			<string>EPOPASSWORD=epo</string>
+                    </TestParams>                                                                                
+                </TestConf>											 
+                <TestConf>
+                    <Name>55_WIN2008R2ENT_SQL2005_LOCAL_NTLMV1_X64</Name>
+                    <Assembly>epo.dll</Assembly>
+                    <TestToRun>epo.Install.silentInstall</TestToRun>
+                    <Machine>Any</Machine>
+                    <TestParams>
+                        <string>OS=WIN2008R2ENT</string>
 			<string>DB=SQL2005</string>
 			<string>DBLOC=LOCAL</string>
 			<string>AUTH=NTLMV1</string>
@@ -17,16 +32,50 @@
 			<string>EPOADMIN=admin</string>			
 			<string>EPOPASSWORD=epo</string>
                     </TestParams>                                                                                
-                </TestConf>											 
+                </TestConf>
                 <TestConf>
-                    <Name>SECOND_WIN2003R2ENT_SQL2005_LOCAL_NTLMV1_X64</Name>
+                    <Name>49_WIN2008DC_SQL2008_LOCAL_NTLMV2_X86</Name>
                     <Assembly>epo.dll</Assembly>
-                    <TestToRun>epo.Program.myAdditionTest</TestToRun>
+                    <TestToRun>epo.Install.silentInstall</TestToRun>
+                    <Machine>Any</Machine>
+                    <TestParams>
+                        <string>OS=WIN2008DC</string>
+			<string>DB=SQL2008</string>
+			<string>DBLOC=LOCAL</string>
+			<string>AUTH=NTLMV2</string>
+			<string>BITNESS=X86</string>
+			<string>EPOADMIN=admin</string>			
+			<string>EPOPASSWORD=epo</string>
+                    </TestParams>                                                                                
+                </TestConf>
+                <TestConf>
+                    <Name>1_WIN2003STD_SQL2005_REMOTE_NTLMV1_X86</Name>
+                    <Assembly>epo.dll</Assembly>
+                    <TestToRun>epo.Install.silentInstall</TestToRun>
+                    <Machine>Any</Machine>
+                    <TestParams>
+                        <string>OS=WIN2003STD</string>
+			<string>DB=SQL2005</string>
+			<string>DBLOC=REMOTE</string>
+			<string>AUTH=NTLMV1</string>
+			<string>BITNESS=X86</string>
+			<string>EPOADMIN=admin</string>			
+			<string>EPOPASSWORD=epo</string>
+                    </TestParams>
+                </TestConf>											 
+	   </Tests>
+        </ParallelTest>
+	<ParallelTest>
+	   <Tests>
+                <TestConf>
+		    <Name>21_WIN2003R2ENT_SQL2005_REMOTE_NTLMV1_X64</Name>
+                    <Assembly>epo.dll</Assembly>
+                    <TestToRun>epo.Install.silentInstall</TestToRun>
                     <Machine>Any</Machine>
                     <TestParams>
                         <string>OS=WIN2003R2ENT</string>
 			<string>DB=SQL2005</string>
-			<string>DBLOC=LOCAL</string>
+			<string>DBLOC=REMOTE</string>
 			<string>AUTH=NTLMV1</string>
 			<string>BITNESS=X64</string>
 			<string>EPOADMIN=admin</string>			
@@ -34,6 +83,6 @@
                     </TestParams>                                                                                
                 </TestConf>											 
 	   </Tests>
-        </ParallelTest>
+	</ParallelTest>
     </ParallelTests>
 </TestGroup>
